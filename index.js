@@ -1,4 +1,3 @@
-// index.js
 import express from "express";
 import pkg from "pg";
 import cors from "cors";
@@ -11,28 +10,23 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// === Conexión a PostgreSQL (Render) con tus credenciales ===
 const pool = new Pool({
   host: "dpg-d2qba16r433s73e4mmh0-a.oregon-postgres.render.com",
   database: "base_de_datos_m5si",
   user: "base_de_datos_m5si_user",
   password: "9dICQaPksuczg6oWgbSPQhmg8hFCtrRT",
   port: 5432,
-  ssl: { rejectUnauthorized: false }, // Render requiere SSL
+  ssl: { rejectUnauthorized: false }, 
 });
 
-// ====== Endpoints ======
-
-// Healthcheck simple
 app.get("/api/saludo", (_req, res) => {
   res.json({
     ok: true,
-    mensaje: "Hola Geo 🚀, tu API está en línea con Render",
+    mensaje: "Hola, bienvenido a mi API PRACTICA #3",
     fecha: new Date().toISOString(),
   });
 });
 
-// GET: listar usuarios
 app.get("/api/usuarios", async (_req, res) => {
   try {
     const { rows } = await pool.query(
@@ -45,7 +39,6 @@ app.get("/api/usuarios", async (_req, res) => {
   }
 });
 
-// POST: crear usuario
 app.post("/api/usuarios", async (req, res) => {
   try {
     const { nombre, correo, password } = req.body;
@@ -58,7 +51,6 @@ app.post("/api/usuarios", async (req, res) => {
     res.status(201).json({ ok: true, usuario: rows[0] });
   } catch (err) {
     console.error("Error INSERT usuario:", err);
-    // Útil cuando hay conflicto por correo UNIQUE:
     if (err.code === "23505") {
       return res.status(409).json({ ok: false, error: "correo_duplicado" });
     }
@@ -66,12 +58,10 @@ app.post("/api/usuarios", async (req, res) => {
   }
 });
 
-// 404 controlado
 app.use((_req, res) => {
   res.status(404).json({ ok: false, error: "not_found" });
 });
 
-// Arranque
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
